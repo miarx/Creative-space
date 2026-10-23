@@ -1,29 +1,48 @@
+
+import { useState } from "react";
+
 export default function WorkshopCard({ workshop, studio }) {
-  return (
-    <article className="workshop-card">
-      <h2>{workshop.title}</h2>
+    const [imageError, setImageError] = useState(false);
 
-      <p>{workshop.description}</p>
+    const imageSrc =
+        !imageError && workshop.imageUrl
+            ? workshop.imageUrl
+            : "/images/placeholder.svg";
 
-      <p>
-        <strong>Studio:</strong> {studio?.name ?? "Unknown studio"}
-      </p>
+    return (
+        <article className="workshop-card">
+            <img
+                className="workshop-card__image"
+                src={imageSrc}
+                alt={workshop.title}
+                onError={() => setImageError(true)}
+            />
 
-      <p>
-        <strong>Date:</strong> {workshop.date}
-      </p>
+            <div className="workshop-card__content">
+                <h2>{workshop.title}</h2>
 
-      <p>
-        <strong>Difficulty:</strong> {workshop.difficulty}
-      </p>
+                <p>{workshop.description}</p>
 
-      <p>
-        <strong>Format:</strong> {workshop.format}
-      </p>
+                <p>
+                    <strong>Studio:</strong> {studio?.name ?? "Unknown studio"}
+                </p>
 
-      <p>
-        <strong>Price:</strong> {workshop.price} UAH
-      </p>
-    </article>
-  );
+                <p>
+                    <strong>Date:</strong> {workshop.date}
+                </p>
+
+                <p>
+                    <strong>Difficulty:</strong> {workshop.difficulty}
+                </p>
+
+                <p>
+                    <strong>Format:</strong> {workshop.format}
+                </p>
+
+                <p>
+                    <strong>Price:</strong> {workshop.price} UAH
+                </p>
+            </div>
+        </article>
+    );
 }
