@@ -1,20 +1,83 @@
+#root {
+  width: 100%;
+  min-height: 100vh;
+}
 
 .app {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 24px;
 }
 
 .app h1 {
-  font-size: 48px;
+  font-size: 42px;
+  margin-bottom: 12px;
+  color: #49352e;
+}
+
+.app > p {
+  color: #806e66;
+  margin-bottom: 48px;
+}
+
+.app > h2 {
+  margin-bottom: 24px;
+  color: #49352e;
+}
+
+.workshops-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+}
+
+.workshop-card {
+  background: #ffffff;
+  border: 1px solid #eaded6;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 16px rgba(73, 53, 46, 0.06);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.workshop-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(73, 53, 46, 0.12);
+}
+
+.workshop-card h2 {
+  font-size: 22px;
+  color: #49352e;
   margin-bottom: 16px;
 }
 
-.app p {
-  font-size: 18px;
-  color: #666;
+.workshop-card p {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #66554e;
+  margin-bottom: 12px;
+}
+
+.workshop-card strong {
+  color: #49352e;
+}
+
+@media (max-width: 900px) {
+  .workshops-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .workshops-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .app {
+    padding: 24px 16px;
+  }
+
+  .app h1 {
+    font-size: 32px;
+  }
 }

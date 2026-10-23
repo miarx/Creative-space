@@ -1,4 +1,3 @@
-
 * {
   box-sizing: border-box;
 }
@@ -6,7 +5,15 @@
 body {
   margin: 0;
   min-width: 320px;
+  min-height: 100vh;
+  background: #faf7f4;
   font-family: Arial, sans-serif;
-  background-color: #faf7f2;
-  color: #292524;
+  color: #49352e;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
 }
