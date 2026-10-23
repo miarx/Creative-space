@@ -99,3 +99,63 @@
 .workshop-card__content {
   padding: 24px;
 }
+
+
+.site-header {
+  background: #ffffff;
+  border-bottom: 1px solid #eaded6;
+}
+
+.header-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px 24px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+}
+
+.logo {
+  font-size: 24px;
+  font-weight: 700;
+  color: #49352e;
+  text-decoration: none;
+}
+
+.site-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+}
+
+.site-nav a {
+  color: #806e66;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.site-nav a:hover,
+.site-nav a.active {
+  color: #b77960;
+}
+
+.site-footer {
+  padding: 32px 20px;
+  text-align: center;
+  color: #806e66;
+  border-top: 1px solid #eaded6;
+}
+
+@media (max-width: 600px) {
+  .header-container {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .site-nav {
+    gap: 16px;
+  }
+}
