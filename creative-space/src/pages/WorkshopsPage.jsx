@@ -14,7 +14,7 @@ function WorkshopsPage() {
             </p>
 
             <div className="workshops-grid">
-                {state.items.map((workshop) => (
+                {state.workshops.map((workshop) => (
                     <WorkshopCard
                         key={workshop.id}
                         workshop={workshop}

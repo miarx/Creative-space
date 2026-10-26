@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 
 import { useState } from "react";
 
@@ -42,6 +43,9 @@ export default function WorkshopCard({ workshop, studio }) {
                 <p>
                     <strong>Price:</strong> {workshop.price} UAH
                 </p>
+                <Link to={`/workshops/${workshop.id}`}>
+                    View Details
+                </Link>
             </div>
         </article>
     );
