@@ -1,35 +1,25 @@
-import { useData } from "./hooks/useData";
-import WorkshopCard from "./components/WorkshopCard";
-
 import "./App.css";
 
+import { Routes, Route } from "react-router-dom";
+
+
+import Layout from "./components/Layout";
+import HomePage from "./pages/HomePage";
+import WorkshopsPage from "./pages/WorkshopsPage";
+
 function App() {
-  const { state } = useData();
+    return (
+        <Routes>
+            <Route path="/" element={<Layout />}>
+                <Route index element={<HomePage />} />
 
-  return (
-    <main className="app">
-      <h1>Creative Space 🎨</h1>
-      <p>Discover and manage creative workshops.</p>
-
-      <h2>Our Workshops ({state.workshops.length})</h2>
-
-      <div className="workshops-grid">
-        {state.workshops.map((workshop) => {
-          const studio = state.studios.find(
-            (studio) => studio.id === workshop.studioId
-          );
-
-          return (
-            <WorkshopCard
-              key={workshop.id}
-              workshop={workshop}
-              studio={studio}
-            />
-          );
-        })}
-      </div>
-    </main>
-  );
+                <Route
+                    path="workshops"
+                    element={<WorkshopsPage />}
+                />
+            </Route>
+        </Routes>
+    );
 }
 
 export default App;
