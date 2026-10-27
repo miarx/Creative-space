@@ -43,15 +43,57 @@ export default function WorkshopForm({
     };
 
     const handleSubmit = (event) => {
-        event.preventDefault();
+    event.preventDefault();
 
-        onSubmit({
-            ...formData,
-            price: Number(formData.price),
-            duration: Number(formData.duration),
-            studioId: Number(formData.studioId),
-            maxParticipants: Number(formData.maxParticipants)
-        });
+    if (formData.title.trim().length < 3) {
+        alert("Title must contain at least 3 characters.");
+        return;
+    }
+
+    if (formData.description.trim().length < 10) {
+        alert("Description must contain at least 10 characters.");
+        return;
+    }
+
+    if (formData.price === "" || Number(formData.price) < 0) {
+        alert("Price cannot be negative.");
+        return;
+    }
+
+    const today = new Date().toLocaleDateString("en-CA");
+
+    if (!formData.date || formData.date < today) {
+        alert("Workshop date cannot be in the past.");
+        return;
+    }
+
+    if (Number(formData.duration) <= 0) {
+        alert("Duration must be greater than zero.");
+        return;
+    }
+
+    if (
+        !Number.isInteger(Number(formData.maxParticipants)) ||
+        Number(formData.maxParticipants) <= 0
+    ) {
+        alert("Number of participants must be a positive integer.");
+        return;
+    }
+
+    if (formData.studioId === "") {
+        alert("Please select a studio.");
+        return;
+    }
+
+    onSubmit({
+        ...formData,
+        title: formData.title.trim(),
+        description: formData.description.trim(),
+        price: Number(formData.price),
+        duration: Number(formData.duration),
+        studioId: Number(formData.studioId),
+        maxParticipants: Number(formData.maxParticipants)
+    });
     };
 
     return (
