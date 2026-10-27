@@ -296,3 +296,39 @@
         grid-template-columns: 1fr;
     }
 }
+
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 36px;
+}
+
+.pagination button {
+    padding: 10px 16px;
+    border: 1px solid #d8bfb6;
+    border-radius: 10px;
+    background-color: #fff8f5;
+    color: #654b46;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.pagination button:hover:not(:disabled) {
+    background-color: #ead4ca;
+}
+
+.pagination button.active {
+    background-color: #a87f73;
+    border-color: #a87f73;
+    color: white;
+}
+
+.pagination button:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}

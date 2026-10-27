@@ -6,7 +6,7 @@ import { ACTION_TYPES } from "../context/actionTypes";
 function WorkshopsPage() {
     const { state, dispatch } = useData();
 
-    // Filtering workshops
+
     const filteredWorkshops = state.workshops.filter((workshop) => {
         const matchesSearch = workshop.title
             .toLowerCase()
@@ -39,7 +39,7 @@ function WorkshopsPage() {
         );
     });
 
-    // Sorting workshops
+
     const sortedWorkshops = [...filteredWorkshops].sort((a, b) => {
         const { field, direction } = state.sort;
 
@@ -56,6 +56,24 @@ function WorkshopsPage() {
         return direction === "asc" ? comparison : -comparison;
     });
 
+    const itemsPerPage = 6;
+    const totalPages = Math.ceil(
+    sortedWorkshops.length / itemsPerPage);
+
+    const currentPage = Math.min(
+           Math.max(state.page, 1),
+          Math.max(totalPages, 1));
+
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const paginatedWorkshops = sortedWorkshops.slice(
+            startIndex,
+            startIndex + itemsPerPage);
+
+    const handlePageChange = (page) => {
+    dispatch({
+        type: ACTION_TYPES.PAGE_CHANGED,
+        payload: page
+    });   };
     return (
         <section className="workshops-page">
             <h1>Creative Workshops</h1>
@@ -203,14 +221,14 @@ function WorkshopsPage() {
                 </select>
             </div>
 
-            {/* Empty results */}
+
             {filteredWorkshops.length === 0 && (
                 <p>No workshops found.</p>
             )}
 
             {/* Workshop cards */}
             <div className="workshops-grid">
-                {sortedWorkshops.map((workshop) => {
+                {paginatedWorkshops.map((workshop) => {
                     const studio = state.studios.find(
                         (item) => item.id === workshop.studioId
                     );
@@ -224,6 +242,35 @@ function WorkshopsPage() {
                     );
                 })}
             </div>
+            {totalPages > 1 && (
+               <div className="pagination">
+               <button
+            type="button"
+            disabled={currentPage === 1}
+            onClick={() => handlePageChange(currentPage - 1)}>
+                 Previous
+                </button>
+
+               {Array.from({ length: totalPages }, (_, index) => {
+               const page = index + 1;
+
+            return (
+                <button
+                    key={page}
+                    type="button"
+                    className={currentPage === page ? "active" : ""}
+                    onClick={() => handlePageChange(page)}>
+                    {page}
+                </button>
+            );
+        })}
+
+        <button
+            type="button"
+            disabled={currentPage === totalPages}
+            onClick={() => handlePageChange(currentPage + 1)}>
+            Next
+        </button> </div>)}
         </section>
     );
 }
