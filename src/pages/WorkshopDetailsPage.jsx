@@ -48,7 +48,7 @@ function WorkshopDetailsPage() {
     };
 
     return (
-        <section className="workshop-details">
+        <section className="workshop-details-page">
             <h1>{workshop.title}</h1>
 
             <p>{workshop.description}</p>

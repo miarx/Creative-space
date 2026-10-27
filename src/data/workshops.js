@@ -7,7 +7,7 @@ export const workshops = [
     date: "2026-11-15",
     duration: 120,
     isAvailable: true,
-    imageUrl: "/images/ceramic-cup.jpg",
+    imageUrl: "/images/1_.jpeg",
     studioId: 2,
     materialIds: [1, 2],
     difficulty: "beginner",
