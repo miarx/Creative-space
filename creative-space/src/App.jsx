@@ -1,4 +1,5 @@
 import "./App.css";
+import CreateWorkshopPage from "./pages/CreateWorkshopPage";
 
 import { Routes, Route } from "react-router-dom";
 
@@ -6,6 +7,7 @@ import { Routes, Route } from "react-router-dom";
 import Layout from "./components/Layout";
 import HomePage from "./pages/HomePage";
 import WorkshopsPage from "./pages/WorkshopsPage";
+
 
 import WorkshopDetailsPage from "./pages/WorkshopDetailsPage";
 
@@ -23,6 +25,11 @@ function App() {
                 <Route
                      path="/workshops/:id"
                      element={<WorkshopDetailsPage />}
+                />
+
+                <Route
+                     path="create"
+                     element={<CreateWorkshopPage />}
                 />
             </Route>
         </Routes>

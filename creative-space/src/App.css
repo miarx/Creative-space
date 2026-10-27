@@ -332,3 +332,83 @@
     opacity: 0.4;
     cursor: not-allowed;
 }
+
+
+/* Create Workshop Page */
+.create-workshop-page {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 40px 24px 70px;
+}
+
+.create-workshop-page h1 {
+    margin-bottom: 10px;
+}
+
+.create-workshop-page > p {
+    margin-bottom: 28px;
+}
+
+.workshop-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 28px;
+    background: #fff8f5;
+    border: 1px solid #ead8d0;
+    border-radius: 16px;
+}
+
+.workshop-form > label {
+    font-weight: 600;
+    color: #654b46;
+}
+
+.workshop-form > input,
+.workshop-form > textarea,
+.workshop-form > select {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid #d8bfb6;
+    border-radius: 10px;
+    font: inherit;
+    background: white;
+}
+
+.workshop-form > input:focus,
+.workshop-form > textarea:focus,
+.workshop-form > select:focus {
+    outline: 2px solid #cda99c;
+    outline-offset: 1px;
+}
+
+.form-materials {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 18px;
+    padding: 16px;
+    border: 1px solid #d8bfb6;
+    border-radius: 10px;
+}
+
+.form-materials label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.workshop-form .primary-button {
+    align-self: flex-start;
+    margin-top: 12px;
+    cursor: pointer;
+}
+
+@media (max-width: 600px) {
+    .create-workshop-page {
+        padding: 24px 16px 40px;
+    }
+
+    .workshop-form {
+        padding: 18px;
+    }
+}
