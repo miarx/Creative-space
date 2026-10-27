@@ -199,7 +199,6 @@
   margin-bottom: 1rem;
 }
 
-/* Workshops page */
 .workshops-page {
     max-width: 1200px;
     margin: 0 auto;
@@ -214,7 +213,6 @@
     margin: 0 0 24px;
 }
 
-/* Search */
 .workshops-search {
     margin-bottom: 18px;
 }
@@ -226,7 +224,6 @@
     border-radius: 10px;
 }
 
-/* Filters */
 .workshops-filters {
     display: flex;
     flex-wrap: wrap;
@@ -261,7 +258,7 @@
     gap: 6px;
 }
 
-/* Sorting */
+
 .workshops-sorting {
     display: flex;
     align-items: center;
@@ -274,7 +271,7 @@
     border-radius: 8px;
 }
 
-/* Cards */
+
 .workshops-grid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -334,7 +331,6 @@
 }
 
 
-/* Create Workshop Page */
 .create-workshop-page {
     max-width: 760px;
     margin: 0 auto;
@@ -411,4 +407,48 @@
     .workshop-form {
         padding: 18px;
     }
+}
+
+
+.workshop-details-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 16px;
+    margin-top: 28px;
+}
+
+.workshop-details-materials {
+    margin: 20px 0;
+}
+
+.workshop-details-materials ul {
+    margin: 10px 0;
+    padding-left: 24px;
+}
+
+.workshop-details-materials li {
+    margin-bottom: 6px;
+}
+
+
+.delete-button {
+    padding: 12px 24px;
+    background-color: #c96f6f;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.delete-button:hover {
+    background-color: #ad5555;
+}
+
+.delete-button:focus-visible {
+    outline: 3px solid #ad5555;
+    outline-offset: 3px;
 }

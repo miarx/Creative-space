@@ -1,5 +1,6 @@
 import "./App.css";
 import CreateWorkshopPage from "./pages/CreateWorkshopPage";
+import EditWorkshopPage from "./pages/EditWorkshopPage";
 
 import { Routes, Route } from "react-router-dom";
 
@@ -31,6 +32,12 @@ function App() {
                      path="create"
                      element={<CreateWorkshopPage />}
                 />
+
+                <Route
+                     path="workshops/:id/edit"
+                     element={<EditWorkshopPage />}
+                />
+
             </Route>
         </Routes>
     );

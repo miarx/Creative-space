@@ -1,12 +1,18 @@
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useData } from "../hooks/useData";
+import { ACTION_TYPES } from "../context/actionTypes";
 
 function WorkshopDetailsPage() {
     const { id } = useParams();
-    const { state } = useData();
+    const navigate = useNavigate();
+    const { state, dispatch } = useData();
 
     const workshop = state.workshops.find(
         (item) => item.id === Number(id)
+    );
+
+    const workshopMaterials = state.materials.filter((material) =>
+    workshop.materialIds.includes(material.id)
     );
 
     if (!workshop) {
@@ -23,6 +29,23 @@ function WorkshopDetailsPage() {
     const studio = state.studios.find(
         (item) => item.id === workshop.studioId
     );
+
+    const handleDelete = () => {
+    const confirmed = window.confirm(
+        `Are you sure you want to delete "${workshop.title}"?`
+    );
+
+    if (!confirmed) {
+        return;
+    }
+
+    dispatch({
+        type: ACTION_TYPES.ITEM_DELETED,
+        payload: workshop.id
+    });
+
+    navigate("/workshops");
+    };
 
     return (
         <section className="workshop-details">
@@ -42,9 +65,40 @@ function WorkshopDetailsPage() {
                 {workshop.isAvailable ? "Available" : "Unavailable"}
             </p>
 
-            <Link to="/workshops">
-                Back to Workshops
-            </Link>
+            <div className="workshop-details-materials">
+            <strong>Materials:</strong>
+
+             {workshopMaterials.length > 0 ? (
+             <ul>
+              {workshopMaterials.map((material) => (
+                <li key={material.id}>
+                    {material.name}
+                </li>
+             ))}
+             </ul>
+              ) : (<p>No materials specified.</p>
+    )}
+             </div>
+
+
+            <div className="workshop-details-actions">
+                <Link to={`/workshops/${workshop.id}/edit`}
+                      className="primary-button">
+                      Edit Workshop
+                </Link>
+
+
+               <button
+                   type="button"
+                   className="delete-button"
+                   onClick={handleDelete}>
+                   Delete Workshop
+               </button>
+
+                <Link to="/workshops">
+                      Back to Workshops
+                </Link>
+              </div>
         </section>
     );
 }

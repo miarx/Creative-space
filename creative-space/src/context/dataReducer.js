@@ -1,4 +1,3 @@
-
 import { ACTION_TYPES } from "./actionTypes";
 
 export function dataReducer(state, action) {
