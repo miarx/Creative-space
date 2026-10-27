@@ -31,6 +31,20 @@
   gap: 24px;
 }
 
+
+@media (max-width: 768px) {
+    .workshops-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .workshops-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
 .workshop-card {
   background: #ffffff;
   border: 1px solid #eaded6;
@@ -451,4 +465,31 @@
 .delete-button:focus-visible {
     outline: 3px solid #ad5555;
     outline-offset: 3px;
+}
+
+@media (max-width: 768px) {
+    .workshop-details-page,
+    .create-workshop-page {
+        width: 100%;
+        padding: 24px 16px;
+        box-sizing: border-box;
+    }
+
+    .workshop-details-actions {
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .workshop-form {
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+
+    .workshop-form input,
+    .workshop-form select,
+    .workshop-form textarea {
+        max-width: 100%;
+        box-sizing: border-box;
+    }
 }
