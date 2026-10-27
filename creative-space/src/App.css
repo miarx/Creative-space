@@ -198,3 +198,101 @@
 .workshops-page h1 {
   margin-bottom: 1rem;
 }
+
+/* Workshops page */
+.workshops-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 32px 24px 60px;
+}
+
+.workshops-page h1 {
+    margin: 0 0 10px;
+}
+
+.workshops-page > p {
+    margin: 0 0 24px;
+}
+
+/* Search */
+.workshops-search {
+    margin-bottom: 18px;
+}
+
+.workshops-search input {
+    width: 100%;
+    max-width: 420px;
+    padding: 12px 16px;
+    border-radius: 10px;
+}
+
+/* Filters */
+.workshops-filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px 16px;
+    margin-bottom: 18px;
+}
+
+.workshops-filters select,
+.workshops-filters > input {
+    padding: 10px 12px;
+    border-radius: 8px;
+}
+
+.workshops-filters > input {
+    width: 140px;
+}
+
+.materials-filter {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 18px;
+    padding: 14px 16px;
+    margin: 4px 0 0;
+    border-radius: 10px;
+}
+
+.materials-filter label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* Sorting */
+.workshops-sorting {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 28px;
+}
+
+.workshops-sorting select {
+    padding: 10px 12px;
+    border-radius: 8px;
+}
+
+/* Cards */
+.workshops-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
+}
+
+@media (max-width: 900px) {
+    .workshops-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 600px) {
+    .workshops-page {
+        padding: 24px 16px 40px;
+    }
+
+    .workshops-grid {
+        grid-template-columns: 1fr;
+    }
+}
