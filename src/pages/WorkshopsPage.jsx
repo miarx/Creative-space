@@ -1,4 +1,4 @@
-
+import { useMemo } from "react";
 import WorkshopCard from "../components/WorkshopCard";
 import { useData } from "../hooks/useData";
 import { ACTION_TYPES } from "../context/actionTypes";
@@ -7,73 +7,87 @@ function WorkshopsPage() {
     const { state, dispatch } = useData();
 
 
-    const filteredWorkshops = state.workshops.filter((workshop) => {
-        const matchesSearch = workshop.title
-            .toLowerCase()
-            .includes(state.search.toLowerCase().trim());
+    const filteredWorkshops = useMemo(() => {
+        return state.workshops.filter((workshop) => {
+            const matchesSearch = workshop.title
+                .toLowerCase()
+                .includes(state.search.toLowerCase().trim());
 
-        const matchesStudio =
-            state.filters.studioId === null ||
-            workshop.studioId === state.filters.studioId;
+            const matchesStudio =
+                state.filters.studioId === null ||
+                workshop.studioId === state.filters.studioId;
 
-        const matchesMaterials =
-            state.filters.materialIds.length === 0 ||
-            state.filters.materialIds.every((id) =>
-                workshop.materialIds.includes(id)
+            const matchesMaterials =
+                state.filters.materialIds.length === 0 ||
+                state.filters.materialIds.every((id) =>
+                    workshop.materialIds.includes(id)
+                );
+
+            const matchesMinPrice =
+                state.filters.minPrice === "" ||
+                workshop.price >= Number(state.filters.minPrice);
+
+            const matchesMaxPrice =
+                state.filters.maxPrice === "" ||
+                workshop.price <= Number(state.filters.maxPrice);
+
+            return (
+                matchesSearch &&
+                matchesStudio &&
+                matchesMaterials &&
+                matchesMinPrice &&
+                matchesMaxPrice
             );
+        });
+    }, [state.workshops, state.search, state.filters]);
 
-        const matchesMinPrice =
-            state.filters.minPrice === "" ||
-            workshop.price >= Number(state.filters.minPrice);
+    // 2. Sorting
+    const sortedWorkshops = useMemo(() => {
+        return [...filteredWorkshops].sort((a, b) => {
+            const { field, direction } = state.sort;
 
-        const matchesMaxPrice =
-            state.filters.maxPrice === "" ||
-            workshop.price <= Number(state.filters.maxPrice);
+            let comparison = 0;
 
-        return (
-            matchesSearch &&
-            matchesStudio &&
-            matchesMaterials &&
-            matchesMinPrice &&
-            matchesMaxPrice
-        );
-    });
+            if (field === "title") {
+                comparison = a.title.localeCompare(b.title);
+            } else if (field === "price") {
+                comparison = a.price - b.price;
+            } else if (field === "date") {
+                comparison = a.date.localeCompare(b.date);
+            }
 
+            return direction === "asc" ? comparison : -comparison;
+        });
+    }, [filteredWorkshops, state.sort]);
 
-    const sortedWorkshops = [...filteredWorkshops].sort((a, b) => {
-        const { field, direction } = state.sort;
-
-        let comparison = 0;
-
-        if (field === "title") {
-            comparison = a.title.localeCompare(b.title);
-        } else if (field === "price") {
-            comparison = a.price - b.price;
-        } else if (field === "date") {
-            comparison = a.date.localeCompare(b.date);
-        }
-
-        return direction === "asc" ? comparison : -comparison;
-    });
-
+    // 3. Pagination
     const itemsPerPage = 6;
+
     const totalPages = Math.ceil(
-    sortedWorkshops.length / itemsPerPage);
+        sortedWorkshops.length / itemsPerPage
+    );
 
     const currentPage = Math.min(
-           Math.max(state.page, 1),
-          Math.max(totalPages, 1));
+        Math.max(state.page, 1),
+        Math.max(totalPages, 1)
+    );
 
     const startIndex = (currentPage - 1) * itemsPerPage;
-    const paginatedWorkshops = sortedWorkshops.slice(
+
+    const paginatedWorkshops = useMemo(() => {
+        return sortedWorkshops.slice(
             startIndex,
-            startIndex + itemsPerPage);
+            startIndex + itemsPerPage
+        );
+    }, [sortedWorkshops, startIndex]);
 
     const handlePageChange = (page) => {
-    dispatch({
-        type: ACTION_TYPES.PAGE_CHANGED,
-        payload: page
-    });   };
+        dispatch({
+            type: ACTION_TYPES.PAGE_CHANGED,
+            payload: page
+        });
+    };
+
     return (
         <section className="workshops-page">
             <h1>Creative Workshops</h1>
@@ -178,8 +192,8 @@ function WorkshopsPage() {
                                     const updatedIds = event.target.checked
                                         ? [...selectedIds, material.id]
                                         : selectedIds.filter(
-                                            (id) => id !== material.id
-                                        );
+                                              (id) => id !== material.id
+                                          );
 
                                     dispatch({
                                         type: ACTION_TYPES.FILTER_CHANGED,
@@ -221,7 +235,7 @@ function WorkshopsPage() {
                 </select>
             </div>
 
-
+            {/* Empty state */}
             {filteredWorkshops.length === 0 && (
                 <p>No workshops found.</p>
             )}
@@ -242,35 +256,44 @@ function WorkshopsPage() {
                     );
                 })}
             </div>
+
+            {/* Pagination */}
             {totalPages > 1 && (
-               <div className="pagination">
-               <button
-            type="button"
-            disabled={currentPage === 1}
-            onClick={() => handlePageChange(currentPage - 1)}>
-                 Previous
-                </button>
+                <div className="pagination">
+                    <button
+                        type="button"
+                        disabled={currentPage === 1}
+                        onClick={() => handlePageChange(currentPage - 1)}
+                    >
+                        Previous
+                    </button>
 
-               {Array.from({ length: totalPages }, (_, index) => {
-               const page = index + 1;
+                    {Array.from({ length: totalPages }, (_, index) => {
+                        const page = index + 1;
 
-            return (
-                <button
-                    key={page}
-                    type="button"
-                    className={currentPage === page ? "active" : ""}
-                    onClick={() => handlePageChange(page)}>
-                    {page}
-                </button>
-            );
-        })}
+                        return (
+                            <button
+                                key={page}
+                                type="button"
+                                className={
+                                    currentPage === page ? "active" : ""
+                                }
+                                onClick={() => handlePageChange(page)}
+                            >
+                                {page}
+                            </button>
+                        );
+                    })}
 
-        <button
-            type="button"
-            disabled={currentPage === totalPages}
-            onClick={() => handlePageChange(currentPage + 1)}>
-            Next
-        </button> </div>)}
+                    <button
+                        type="button"
+                        disabled={currentPage === totalPages}
+                        onClick={() => handlePageChange(currentPage + 1)}
+                    >
+                        Next
+                    </button>
+                </div>
+            )}
         </section>
     );
 }
