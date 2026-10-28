@@ -18,9 +18,9 @@ export function dataReducer(state, action) {
       return {
         ...state,
         workshops: state.workshops.map((workshop) =>
-          workshop.id === action.payload.id
-            ? action.payload
-            : workshop
+            workshop.id === action.payload.id
+                ? action.payload
+                : workshop
         )
       };
 
@@ -28,38 +28,8 @@ export function dataReducer(state, action) {
       return {
         ...state,
         workshops: state.workshops.filter(
-          (workshop) => workshop.id !== action.payload
+            (workshop) => workshop.id !== action.payload
         )
-      };
-
-    case ACTION_TYPES.SEARCH_CHANGED:
-      return {
-        ...state,
-        search: action.payload,
-        page: 1
-      };
-
-    case ACTION_TYPES.PAGE_CHANGED:
-      return {
-        ...state,
-        page: action.payload
-      };
-
-    case ACTION_TYPES.SORT_CHANGED:
-      return {
-        ...state,
-        sort: action.payload,
-        page: 1
-      };
-
-    case ACTION_TYPES.FILTER_CHANGED:
-      return {
-        ...state,
-        filters: {
-          ...state.filters,
-          ...action.payload
-        },
-        page: 1
       };
 
     default:

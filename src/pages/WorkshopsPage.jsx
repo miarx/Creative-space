@@ -1,35 +1,36 @@
 import { useMemo } from "react";
 import WorkshopCard from "../components/WorkshopCard";
 import { useData } from "../hooks/useData";
-import { ACTION_TYPES } from "../context/actionTypes";
+import { useWorkshopQuery } from "../hooks/useWorkshopQuery";
 
 function WorkshopsPage() {
-    const { state, dispatch } = useData();
+    const { state } = useData();
+    const { search, filters, sort, page, updateQuery, resetFilters } = useWorkshopQuery();
 
 
     const filteredWorkshops = useMemo(() => {
         return state.workshops.filter((workshop) => {
             const matchesSearch = workshop.title
                 .toLowerCase()
-                .includes(state.search.toLowerCase().trim());
+                .includes(search.toLowerCase().trim());
 
             const matchesStudio =
-                state.filters.studioId === null ||
-                workshop.studioId === state.filters.studioId;
+                filters.studioId === null ||
+                workshop.studioId === filters.studioId;
 
             const matchesMaterials =
-                state.filters.materialIds.length === 0 ||
-                state.filters.materialIds.every((id) =>
+                filters.materialIds.length === 0 ||
+                filters.materialIds.every((id) =>
                     workshop.materialIds.includes(id)
                 );
 
             const matchesMinPrice =
-                state.filters.minPrice === "" ||
-                workshop.price >= Number(state.filters.minPrice);
+                filters.minPrice === "" ||
+                workshop.price >= Number(filters.minPrice);
 
             const matchesMaxPrice =
-                state.filters.maxPrice === "" ||
-                workshop.price <= Number(state.filters.maxPrice);
+                filters.maxPrice === "" ||
+                workshop.price <= Number(filters.maxPrice);
 
             return (
                 matchesSearch &&
@@ -39,12 +40,12 @@ function WorkshopsPage() {
                 matchesMaxPrice
             );
         });
-    }, [state.workshops, state.search, state.filters]);
+    }, [state.workshops, search, filters]);
 
     // 2. Sorting
     const sortedWorkshops = useMemo(() => {
         return [...filteredWorkshops].sort((a, b) => {
-            const { field, direction } = state.sort;
+            const [field, direction] = sort.split("-");
 
             let comparison = 0;
 
@@ -58,7 +59,7 @@ function WorkshopsPage() {
 
             return direction === "asc" ? comparison : -comparison;
         });
-    }, [filteredWorkshops, state.sort]);
+    }, [filteredWorkshops, sort]);
 
     // 3. Pagination
     const itemsPerPage = 6;
@@ -68,7 +69,7 @@ function WorkshopsPage() {
     );
 
     const currentPage = Math.min(
-        Math.max(state.page, 1),
+        Math.max(page, 1),
         Math.max(totalPages, 1)
     );
 
@@ -81,12 +82,7 @@ function WorkshopsPage() {
         );
     }, [sortedWorkshops, startIndex]);
 
-    const handlePageChange = (page) => {
-        dispatch({
-            type: ACTION_TYPES.PAGE_CHANGED,
-            payload: page
-        });
-    };
+    const handlePageChange = (nextPage) => updateQuery({ page: nextPage });
 
     return (
         <section className="workshops-page">
@@ -102,13 +98,8 @@ function WorkshopsPage() {
                 <input
                     type="search"
                     placeholder="Search workshops..."
-                    value={state.search}
-                    onChange={(event) =>
-                        dispatch({
-                            type: ACTION_TYPES.SEARCH_CHANGED,
-                            payload: event.target.value
-                        })
-                    }
+                    value={search}
+                    onChange={(event) => updateQuery({ search: event.target.value, page: 1 })}
                 />
             </div>
 
@@ -118,17 +109,8 @@ function WorkshopsPage() {
 
                 <select
                     id="studio-filter"
-                    value={state.filters.studioId ?? ""}
-                    onChange={(event) =>
-                        dispatch({
-                            type: ACTION_TYPES.FILTER_CHANGED,
-                            payload: {
-                                studioId: event.target.value
-                                    ? Number(event.target.value)
-                                    : null
-                            }
-                        })
-                    }
+                    value={filters.studioId ?? ""}
+                    onChange={(event) => updateQuery({ studio: event.target.value, page: 1 })}
                 >
                     <option value="">All Studios</option>
 
@@ -146,15 +128,8 @@ function WorkshopsPage() {
                     type="number"
                     min="0"
                     placeholder="Min price"
-                    value={state.filters.minPrice}
-                    onChange={(event) =>
-                        dispatch({
-                            type: ACTION_TYPES.FILTER_CHANGED,
-                            payload: {
-                                minPrice: event.target.value
-                            }
-                        })
-                    }
+                    value={filters.minPrice}
+                    onChange={(event) => updateQuery({ minPrice: event.target.value, page: 1 })}
                 />
 
                 <label htmlFor="max-price">Max Price:</label>
@@ -164,15 +139,8 @@ function WorkshopsPage() {
                     type="number"
                     min="0"
                     placeholder="Max price"
-                    value={state.filters.maxPrice}
-                    onChange={(event) =>
-                        dispatch({
-                            type: ACTION_TYPES.FILTER_CHANGED,
-                            payload: {
-                                maxPrice: event.target.value
-                            }
-                        })
-                    }
+                    value={filters.maxPrice}
+                    onChange={(event) => updateQuery({ maxPrice: event.target.value, page: 1 })}
                 />
 
                 <fieldset className="materials-filter">
@@ -182,25 +150,20 @@ function WorkshopsPage() {
                         <label key={material.id}>
                             <input
                                 type="checkbox"
-                                checked={state.filters.materialIds.includes(
+                                checked={filters.materialIds.includes(
                                     material.id
                                 )}
                                 onChange={(event) => {
                                     const selectedIds =
-                                        state.filters.materialIds;
+                                        filters.materialIds;
 
                                     const updatedIds = event.target.checked
                                         ? [...selectedIds, material.id]
                                         : selectedIds.filter(
-                                              (id) => id !== material.id
-                                          );
+                                            (id) => id !== material.id
+                                        );
 
-                                    dispatch({
-                                        type: ACTION_TYPES.FILTER_CHANGED,
-                                        payload: {
-                                            materialIds: updatedIds
-                                        }
-                                    });
+                                    updateQuery({ materials: updatedIds, page: 1 });
                                 }}
                             />
                             {material.name}
@@ -215,16 +178,8 @@ function WorkshopsPage() {
 
                 <select
                     id="sort-select"
-                    value={`${state.sort.field}-${state.sort.direction}`}
-                    onChange={(event) => {
-                        const [field, direction] =
-                            event.target.value.split("-");
-
-                        dispatch({
-                            type: ACTION_TYPES.SORT_CHANGED,
-                            payload: { field, direction }
-                        });
-                    }}
+                    value={sort}
+                    onChange={(event) => updateQuery({ sort: event.target.value, page: 1 })}
                 >
                     <option value="title-asc">Name: A to Z</option>
                     <option value="title-desc">Name: Z to A</option>
@@ -237,7 +192,7 @@ function WorkshopsPage() {
 
             {/* Empty state */}
             {filteredWorkshops.length === 0 && (
-                <p>No workshops found.</p>
+                <div className="workshops-empty" role="status"><p>No workshops found. Try changing your search or filters.</p><button type="button" className="primary-button" onClick={resetFilters}>Reset Filters</button></div>
             )}
 
             {/* Workshop cards */}

@@ -1,12 +1,12 @@
-
 import { useState } from "react";
+import { useUnsavedChanges } from "../hooks/useUnsavedChanges";
 import { useData } from "../hooks/useData";
 
 export default function WorkshopForm({
-    initialData = {},
-    onSubmit,
-    submitLabel = "Save Workshop"
-}) {
+                                         initialData = {},
+                                         onSubmit,
+                                         submitLabel = "Save Workshop"
+                                     }) {
     const { state } = useData();
 
     const [formData, setFormData] = useState({
@@ -21,6 +21,35 @@ export default function WorkshopForm({
         maxParticipants: initialData.maxParticipants ?? "",
         materialIds: initialData.materialIds ?? []
     });
+
+    const [touched, setTouched] = useState({});
+    const [submitted, setSubmitted] = useState(false);
+    const isDirty = JSON.stringify(formData) !== JSON.stringify({
+        title: initialData.title ?? "", description: initialData.description ?? "",
+        price: initialData.price ?? "", date: initialData.date ?? "",
+        duration: initialData.duration ?? "", studioId: initialData.studioId ?? "",
+        difficulty: initialData.difficulty ?? "Beginner", format: initialData.format ?? "Offline",
+        maxParticipants: initialData.maxParticipants ?? "", materialIds: initialData.materialIds ?? []
+    });
+    const markSaved = useUnsavedChanges(isDirty);
+    const today = new Date().toLocaleDateString("en-CA");
+    const errors = {
+        title: formData.title.trim().length < 3 ? "Title must contain at least 3 characters." : "",
+        description: formData.description.trim().length < 10 ? "Description must contain at least 10 characters." : "",
+        price: formData.price === "" || !Number.isFinite(Number(formData.price)) || Number(formData.price) < 0 ? "Enter a non-negative price." : "",
+        date: !formData.date || formData.date < today ? "Choose today or a future date." : "",
+        duration: formData.duration === "" || Number(formData.duration) <= 0 ? "Duration must be greater than zero." : "",
+        studioId: formData.studioId === "" ? "Please select a studio." : "",
+        maxParticipants: formData.maxParticipants === "" || !Number.isInteger(Number(formData.maxParticipants)) || Number(formData.maxParticipants) <= 0 ? "Enter a positive whole number." : ""
+    };
+    const invalid = Object.values(errors).some(Boolean);
+    const onBlur = (event) => setTouched((previous) => ({ ...previous, [event.target.name]: true }));
+    const errorFor = (name) => (touched[name] || submitted) && errors[name];
+    const fieldProps = (name) => ({
+        onBlur, "aria-invalid": Boolean(errorFor(name)),
+        "aria-describedby": errorFor(name) ? `${name}-error` : undefined
+    });
+    const errorMessage = (name) => errorFor(name) ? <p className="form-error" id={`${name}-error`} role="alert">{errors[name]}</p> : null;
 
     const handleChange = (event) => {
         const { name, value } = event.target;
@@ -43,80 +72,50 @@ export default function WorkshopForm({
     };
 
     const handleSubmit = (event) => {
-    event.preventDefault();
-
-    if (formData.title.trim().length < 3) {
-        alert("Title must contain at least 3 characters.");
-        return;
-    }
-
-    if (formData.description.trim().length < 10) {
-        alert("Description must contain at least 10 characters.");
-        return;
-    }
-
-    if (formData.price === "" || Number(formData.price) < 0) {
-        alert("Price cannot be negative.");
-        return;
-    }
-
-    const today = new Date().toLocaleDateString("en-CA");
-
-    if (!formData.date || formData.date < today) {
-        alert("Workshop date cannot be in the past.");
-        return;
-    }
-
-    if (Number(formData.duration) <= 0) {
-        alert("Duration must be greater than zero.");
-        return;
-    }
-
-    if (
-        !Number.isInteger(Number(formData.maxParticipants)) ||
-        Number(formData.maxParticipants) <= 0
-    ) {
-        alert("Number of participants must be a positive integer.");
-        return;
-    }
-
-    if (formData.studioId === "") {
-        alert("Please select a studio.");
-        return;
-    }
-
-    onSubmit({
-        ...formData,
-        title: formData.title.trim(),
-        description: formData.description.trim(),
-        price: Number(formData.price),
-        duration: Number(formData.duration),
-        studioId: Number(formData.studioId),
-        maxParticipants: Number(formData.maxParticipants)
-    });
+        event.preventDefault();
+        setSubmitted(true);
+        if (invalid) {
+            const firstInvalid = Object.keys(errors).find((name) => errors[name]);
+            event.currentTarget.elements.namedItem(firstInvalid)?.focus();
+            return;
+        }
+        markSaved();
+        onSubmit({
+            ...formData,
+            title: formData.title.trim(),
+            description: formData.description.trim(),
+            price: Number(formData.price),
+            duration: Number(formData.duration),
+            studioId: Number(formData.studioId),
+            maxParticipants: Number(formData.maxParticipants)
+        });
     };
 
     return (
-        <form className="workshop-form" onSubmit={handleSubmit}>
+        <form className="workshop-form" onSubmit={handleSubmit} noValidate>
             <label htmlFor="title">Workshop Title</label>
             <input
                 id="title"
                 name="title"
                 type="text"
                 value={formData.title}
+                {...fieldProps("title")}
                 onChange={handleChange}
                 required
             />
+            {errorMessage("title")}
 
             <label htmlFor="description">Description</label>
             <textarea
                 id="description"
                 name="description"
                 value={formData.description}
+                {...fieldProps("description")}
                 onChange={handleChange}
                 rows="4"
                 required
             />
+            {errorMessage("description")}
 
             <label htmlFor="price">Price (UAH)</label>
             <input
@@ -125,9 +124,11 @@ export default function WorkshopForm({
                 type="number"
                 min="0"
                 value={formData.price}
+                {...fieldProps("price")}
                 onChange={handleChange}
                 required
             />
+            {errorMessage("price")}
 
             <label htmlFor="date">Date</label>
             <input
@@ -135,9 +136,11 @@ export default function WorkshopForm({
                 name="date"
                 type="date"
                 value={formData.date}
+                {...fieldProps("date")}
                 onChange={handleChange}
                 required
             />
+            {errorMessage("date")}
 
             <label htmlFor="duration">Duration (minutes)</label>
             <input
@@ -146,15 +149,18 @@ export default function WorkshopForm({
                 type="number"
                 min="1"
                 value={formData.duration}
+                {...fieldProps("duration")}
                 onChange={handleChange}
                 required
             />
+            {errorMessage("duration")}
 
             <label htmlFor="studioId">Studio</label>
             <select
                 id="studioId"
                 name="studioId"
                 value={formData.studioId}
+                {...fieldProps("studioId")}
                 onChange={handleChange}
                 required
             >
@@ -165,6 +171,7 @@ export default function WorkshopForm({
                     </option>
                 ))}
             </select>
+            {errorMessage("studioId")}
 
             <label htmlFor="difficulty">Difficulty</label>
             <select
@@ -198,9 +205,11 @@ export default function WorkshopForm({
                 type="number"
                 min="1"
                 value={formData.maxParticipants}
+                {...fieldProps("maxParticipants")}
                 onChange={handleChange}
                 required
             />
+            {errorMessage("maxParticipants")}
 
             <fieldset className="form-materials">
                 <legend>Materials</legend>
@@ -221,7 +230,7 @@ export default function WorkshopForm({
                 ))}
             </fieldset>
 
-            <button type="submit" className="primary-button">
+            <button type="submit" className="primary-button" disabled={submitted && invalid}>
                 {submitLabel}
             </button>
         </form>
